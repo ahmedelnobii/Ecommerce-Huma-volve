@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/dummy_data.dart';
 import '../../../core/di/get_it.dart';
 import '../../../core/theme.dart';
+import '../../../core/widgets/custom_shimmer_card.dart';
 import '../domain/entities/category.dart';
 import '../presentation/cubit/category_cubit.dart';
 import '../presentation/cubit/category_states.dart';
@@ -105,14 +106,16 @@ class _HomeViewState extends State<_HomeView> {
                     const SizedBox(height: 32),
                     Text(
                       'Explore',
-                      style: Theme.of(context).textTheme.displayLarge
-                          ?.copyWith(fontSize: 36),
+                      style: Theme.of(
+                        context,
+                      ).textTheme.displayLarge?.copyWith(fontSize: 36),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       'Best trendy collection!',
-                      style: Theme.of(context).textTheme.bodyMedium
-                          ?.copyWith(fontSize: 18),
+                      style: Theme.of(
+                        context,
+                      ).textTheme.bodyMedium?.copyWith(fontSize: 18),
                     ),
                     const SizedBox(height: 32),
                     Container(
@@ -159,14 +162,18 @@ class _HomeViewState extends State<_HomeView> {
                         builder: (context, state) {
                           if (state is CategoryLoading ||
                               state is CategoryInitial) {
-                            return const Center(
-                              child: SizedBox(
-                                width: 24,
-                                height: 24,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                ),
-                              ),
+                            return ListView.separated(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: 4,
+                              separatorBuilder: (context, index) =>
+                                  const SizedBox(width: 12),
+                              itemBuilder: (context, index) =>
+                                  const CustomShimmerCard(
+                                    compact: true,
+                                    width: 88,
+                                    height: 44,
+                                    borderRadius: 24,
+                                  ),
                             );
                           }
                           if (state is CategoryError) {
@@ -180,7 +187,8 @@ class _HomeViewState extends State<_HomeView> {
                             );
                           }
 
-                          final categories = (state as CategoryLoaded).categories;
+                          final categories =
+                              (state as CategoryLoaded).categories;
                           return _buildCategoryList(categories);
                         },
                       ),
@@ -194,10 +202,17 @@ class _HomeViewState extends State<_HomeView> {
               sliver: BlocBuilder<ProductCubit, ProductState>(
                 builder: (context, state) {
                   if (state is ProductsInitial || state is ProductsLoading) {
-                    return const SliverToBoxAdapter(
-                      child: Padding(
-                        padding: EdgeInsets.all(32),
-                        child: Center(child: CircularProgressIndicator()),
+                    return SliverGrid(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            childAspectRatio: 0.7,
+                            crossAxisSpacing: 16,
+                            mainAxisSpacing: 16,
+                          ),
+                      delegate: SliverChildBuilderDelegate(
+                        (context, index) => const CustomShimmerCard(),
+                        childCount: 6,
                       ),
                     );
                   }
@@ -239,15 +254,11 @@ class _HomeViewState extends State<_HomeView> {
                       (context, index) {
                         if (index == loaded.products.length) {
                           if (loaded.isLoadingMore) {
-                            return const Center(
-                              child: CircularProgressIndicator(),
-                            );
+                            return const CustomShimmerCard();
                           }
                           return Center(
                             child: TextButton(
-                              onPressed: context
-                                  .read<ProductCubit>()
-                                  .loadMore,
+                              onPressed: context.read<ProductCubit>().loadMore,
                               child: Text(
                                 'Could not load more. Retry',
                                 textAlign: TextAlign.center,
@@ -300,9 +311,7 @@ class _HomeViewState extends State<_HomeView> {
               _allCategoriesSelected = false;
               _selectedCategoryId = category.id;
             });
-            context.read<ProductCubit>().loadProducts(
-              categoryId: category.id,
-            );
+            context.read<ProductCubit>().loadProducts(categoryId: category.id);
           },
         );
       },
