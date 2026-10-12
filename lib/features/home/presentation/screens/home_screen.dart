@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../core/dummy_data.dart';
-import '../../../core/di/get_it.dart';
-import '../../../core/theme.dart';
-import '../../../core/widgets/custom_shimmer_card.dart';
-import '../domain/entities/category.dart';
-import '../presentation/cubit/category_cubit.dart';
-import '../presentation/cubit/category_states.dart';
-import '../presentation/cubit/product_cubit.dart';
-import '../presentation/cubit/product_states.dart';
+import '../../../../core/dummy_data.dart';
+import '../../../../core/di/get_it.dart';
+import '../../../../core/theme.dart';
+import '../../../../core/widgets/custom_shimmer_card.dart';
+import '../../domain/entities/category.dart';
+import '../cubit/category_cubit.dart';
+import '../cubit/category_states.dart';
+import '../cubit/product_cubit.dart';
+import '../cubit/product_states.dart';
 import '../widgets/product_card.dart';
 import '../widgets/category_chip.dart';
 
@@ -20,7 +20,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (_) => getIt<CategoryCubit>()..loadCategories()),
+        BlocProvider(create: (_) => getIt<CategoryCubit>()),
         BlocProvider(create: (_) => getIt<ProductCubit>()..loadProducts()),
       ],
       child: const _HomeView(),

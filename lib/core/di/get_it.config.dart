@@ -99,7 +99,7 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.singleton<_i491.Login>(() => _i491.Login(gh<_i566.AuthRepo>()));
     gh.singleton<_i18.Register>(() => _i18.Register(gh<_i566.AuthRepo>()));
-    gh.factory<_i226.CategoryCubit>(
+    gh.singleton<_i226.CategoryCubit>(
       () => _i226.CategoryCubit(gh<_i407.GetCategories>()),
     );
     gh.singleton<_i808.GetProducts>(

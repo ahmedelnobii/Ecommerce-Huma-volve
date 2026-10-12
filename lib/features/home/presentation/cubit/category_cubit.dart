@@ -3,11 +3,13 @@ import 'package:ecommerce_app_huma_volve/features/home/presentation/cubit/catego
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
-@injectable
+@singleton
 class CategoryCubit extends Cubit<CategoryState> {
   final GetCategories _getCategories;
 
-  CategoryCubit(this._getCategories) : super(CategoryInitial());
+  CategoryCubit(this._getCategories) : super(CategoryInitial()) {
+    loadCategories();
+  }
 
   Future<void> loadCategories() async {
     emit(CategoryLoading());
