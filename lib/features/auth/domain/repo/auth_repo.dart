@@ -4,6 +4,6 @@ import 'package:ecommerce_app_huma_volve/features/auth/data/models/login_request
 import 'package:ecommerce_app_huma_volve/features/auth/data/models/register_request.dart';
 
 abstract class AuthRepo {
-  Future<Either<Failer, void>> login(LoginRequest loginRequset);
-  Future<Either<Failer, void>> register(RegisterRequest registerRequset);
+  Future<Either<Failure, void>> login(LoginRequest loginRequset);
+  Future<Either<Failure, void>> register(RegisterRequest registerRequset);
 }

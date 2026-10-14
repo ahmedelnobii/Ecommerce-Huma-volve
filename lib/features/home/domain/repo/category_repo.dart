@@ -3,5 +3,5 @@ import 'package:ecommerce_app_huma_volve/core/errors/failer.dart';
 import 'package:ecommerce_app_huma_volve/features/home/domain/entities/category.dart';
 
 abstract class CategoryRepo {
-  Future<Either<Failer, List<Category>>> getCategories();
+  Future<Either<Failure, List<Category>>> getCategories();
 }

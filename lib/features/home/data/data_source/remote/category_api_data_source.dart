@@ -30,14 +30,8 @@ class CategoryApiDataSource implements CategoryRemoteDataSource {
         }
         return CategoryModel.fromJson(Map<String, dynamic>.from(item));
       }).toList();
-    } on DioException catch (error) {
-      final responseData = error.response?.data;
-      final message = responseData is Map ? responseData['message'] : null;
-      throw RemoteExptions(
-        message is String ? message : 'Failed to load categories',
-      );
-    } on FormatException {
-      throw RemoteExptions('Invalid category response');
+    } catch (error) {
+      throw RemoteExptions(error.toString());
     }
   }
 }

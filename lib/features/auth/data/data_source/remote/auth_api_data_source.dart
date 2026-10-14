@@ -7,6 +7,7 @@ import 'package:ecommerce_app_huma_volve/features/auth/data/models/login_responc
 import 'package:ecommerce_app_huma_volve/features/auth/data/models/register_request.dart';
 import 'package:ecommerce_app_huma_volve/features/auth/data/models/register_responce.dart';
 import 'package:injectable/injectable.dart';
+
 @Singleton(as: AuthRemoteDataSource)
 class AuthApiDataSource implements AuthRemoteDataSource {
   final Dio _dio;
@@ -22,11 +23,7 @@ class AuthApiDataSource implements AuthRemoteDataSource {
       final loginResponce = LoginResponse.fromJson(response.data);
       return loginResponce;
     } catch (e) {
-      String? msg;
-      if (e is DioException) {
-        msg = e.response?.data["message"];
-      }
-      throw RemoteExptions(msg ?? "Failed to Login");
+      throw RemoteExptions(e.toString());
     }
   }
 
@@ -40,11 +37,7 @@ class AuthApiDataSource implements AuthRemoteDataSource {
       final registerResponce = RegisterResponse.fromJson(response.data);
       return registerResponce;
     } catch (e) {
-      String? msg;
-      if (e is DioException) {
-        msg = e.response?.data["message"];
-      }
-      throw RemoteExptions(msg ?? "Failed to Register");
+      throw RemoteExptions(e.toString());
     }
   }
 }

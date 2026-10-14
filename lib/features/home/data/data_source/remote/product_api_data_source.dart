@@ -22,10 +22,7 @@ class ProductApiDataSource implements ProductRemoteDataSource {
           : '${ApiConsts.categoriesEndPoint}/$categoryId/products';
       final response = await _dio.get(
         endpoint,
-        queryParameters: {
-          'limit': ApiConsts.productsLimit,
-          'offset': offset,
-        },
+        queryParameters: {'limit': ApiConsts.productsLimit, 'offset': offset},
       );
       final data = response.data;
 
@@ -39,14 +36,8 @@ class ProductApiDataSource implements ProductRemoteDataSource {
         }
         return ProductModel.fromJson(Map<String, dynamic>.from(item));
       }).toList();
-    } on DioException catch (error) {
-      final responseData = error.response?.data;
-      final message = responseData is Map ? responseData['message'] : null;
-      throw RemoteExptions(
-        message is String ? message : 'Failed to load products',
-      );
-    } on FormatException {
-      throw RemoteExptions('Invalid product response');
+    } catch (error) {
+      throw RemoteExptions(error.toString());
     }
   }
 }

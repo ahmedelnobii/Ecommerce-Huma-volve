@@ -10,7 +10,7 @@ class GetCategories {
 
   GetCategories(this._categoryRepo);
 
-  Future<Either<Failer, List<Category>>> call() {
+  Future<Either<Failure, List<Category>>> call() {
     return _categoryRepo.getCategories();
   }
 }

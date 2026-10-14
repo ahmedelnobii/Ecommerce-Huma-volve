@@ -224,7 +224,7 @@ class _HomeViewState extends State<_HomeView> {
                           onPressed: () => context
                               .read<ProductCubit>()
                               .loadProducts(categoryId: _selectedCategoryId),
-                          child: Text('Could not load products. Retry'),
+                          child: Text('${state.message}. Retry'),
                         ),
                       ),
                     );

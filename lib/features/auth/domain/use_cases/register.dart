@@ -8,7 +8,7 @@ import 'package:injectable/injectable.dart';
 class Register {
   final AuthRepo _authRepo;
   Register(this._authRepo);
-  Future<Either<Failer, void>> call({
+  Future<Either<Failure, void>> call({
     required RegisterRequest registerRequest,
   }) async {
     return await _authRepo.register(registerRequest);

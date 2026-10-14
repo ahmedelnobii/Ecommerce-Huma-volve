@@ -13,7 +13,7 @@ class ProductRepoImpl implements ProductRepo {
   ProductRepoImpl(this._remoteDataSource);
 
   @override
-  Future<Either<Failer, List<Product>>> getProducts({
+  Future<Either<Failure, List<Product>>> getProducts({
     int? categoryId,
     required int offset,
   }) async {
@@ -23,8 +23,8 @@ class ProductRepoImpl implements ProductRepo {
         offset: offset,
       );
       return Right(products);
-    } on AppExceptions catch (error) {
-      return Left(Failer(error.message));
+    } on AppExceptions catch (e) {
+      return Left(ErrorHandler.handle(e.message));
     }
   }
 }

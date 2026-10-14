@@ -10,7 +10,7 @@ class GetProducts {
 
   GetProducts(this._productRepo);
 
-  Future<Either<Failer, List<Product>>> call({
+  Future<Either<Failure, List<Product>>> call({
     int? categoryId,
     required int offset,
   }) {

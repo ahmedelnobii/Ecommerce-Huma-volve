@@ -13,12 +13,12 @@ class CategoryRepoImpl implements CategoryRepo {
   CategoryRepoImpl(this._remoteDataSource);
 
   @override
-  Future<Either<Failer, List<Category>>> getCategories() async {
+  Future<Either<Failure, List<Category>>> getCategories() async {
     try {
       final categories = await _remoteDataSource.getCategories();
       return Right(categories);
-    } on AppExceptions catch (error) {
-      return Left(Failer(error.message));
+    } on AppExceptions catch (e) {
+      return Left(ErrorHandler.handle(e.message));
     }
   }
 }

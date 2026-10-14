@@ -37,7 +37,7 @@ class _RecordingProductRepo implements ProductRepo {
   final requests = <({int? categoryId, int offset})>[];
 
   @override
-  Future<Either<Failer, List<Product>>> getProducts({
+  Future<Either<Failure, List<Product>>> getProducts({
     int? categoryId,
     required int offset,
   }) async {

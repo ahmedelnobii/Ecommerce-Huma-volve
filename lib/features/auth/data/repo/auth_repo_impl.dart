@@ -16,24 +16,26 @@ class AuthRepoImpl implements AuthRepo {
   AuthRepoImpl(this._remoteDataSource, this._localDataSource);
 
   @override
-  Future<Either<Failer, void>> login(LoginRequest loginRequset) async {
+  Future<Either<Failure, void>> login(LoginRequest loginRequset) async {
     try {
       final loginResponse = await _remoteDataSource.login(loginRequset);
       await _localDataSource.saveAccessToken(loginResponse.accessToken);
       await _localDataSource.saveRefreshToken(loginResponse.refreshToken);
       return Right(null);
     } on AppExceptions catch (e) {
-      return Left(Failer(e.message));
+      return Left(ErrorHandler.handle(e.message));
     }
   }
 
   @override
-  Future<Either<Failer, void>> register(RegisterRequest registerRequset) async {
+  Future<Either<Failure, void>> register(
+    RegisterRequest registerRequset,
+  ) async {
     try {
       await _remoteDataSource.register(registerRequset);
       return Right(null);
     } on AppExceptions catch (e) {
-      return Left(Failer(e.message));
+      return Left(ErrorHandler.handle(e.message));
     }
   }
 }
