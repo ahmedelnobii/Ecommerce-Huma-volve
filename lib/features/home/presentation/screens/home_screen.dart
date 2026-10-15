@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/di/get_it.dart';
@@ -14,10 +15,13 @@ import '../cubit/product_states.dart';
 import '../widgets/product_card.dart';
 import '../widgets/category_chip.dart';
 
-// The chip row lives at approx y=186px; we start the sticky-bar transition
-// 30px before that and complete it 60px later.
-const double _kStickyStart = 160.0;
-const double _kStickyRange = 70.0;
+// The greeting header is approx 204px high and the chip row is 64px (268px total).
+// The sticky black bar starts fading/sliding in at 140px and fully locks at 200px.
+// At offset 206px, the old chip row is completely hidden under the 54px black bar,
+// and the product grid starts right below the black bar with a clean 8px gap.
+const double _kStickyStart = 140.0;
+const double _kStickyRange = 60.0;
+const double _kDockedOffset = 206.0;
 // Heights
 const double _kChipsRowHeight = 44.0;
 const double _kStickyBarHeight = 54.0;
@@ -48,6 +52,7 @@ class _HomeViewState extends State<_HomeView> {
   final ScrollController _scrollController = ScrollController();
   int? _selectedCategoryId;
   bool _allCategoriesSelected = true;
+  bool _keepBlackBarVisible = false;
 
   @override
   void initState() {
@@ -67,21 +72,60 @@ class _HomeViewState extends State<_HomeView> {
     if (_scrollController.position.extentAfter < 500) {
       context.read<ProductCubit>().loadMore();
     }
+
+    // Only release the sticky bar hold if the user intentionally scrolls back up
+    if (_keepBlackBarVisible &&
+        _scrollController.hasClients &&
+        _scrollController.position.userScrollDirection ==
+            ScrollDirection.forward &&
+        _scrollController.offset < _kStickyStart) {
+      setState(() {
+        _keepBlackBarVisible = false;
+      });
+    }
   }
 
-  void _selectAll() {
+  void _scrollToDocked() {
+    if (!_scrollController.hasClients) return;
+    final current = _scrollController.offset;
+    if ((current - _kDockedOffset).abs() < 2.0) return;
+
+    if (current > _kDockedOffset + 400) {
+      _scrollController.jumpTo(_kDockedOffset);
+    } else {
+      _scrollController.animateTo(
+        _kDockedOffset,
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeOutCubic,
+      );
+    }
+  }
+
+  void _selectAll({bool fromSticky = false}) {
     setState(() {
       _allCategoriesSelected = true;
       _selectedCategoryId = null;
+      if (fromSticky) {
+        _keepBlackBarVisible = true;
+      }
     });
+    if (fromSticky) {
+      _scrollToDocked();
+    }
     context.read<ProductCubit>().loadProducts();
   }
 
-  void _selectCategory(Category cat) {
+  void _selectCategory(Category cat, {bool fromSticky = false}) {
     setState(() {
       _allCategoriesSelected = false;
       _selectedCategoryId = cat.id;
+      if (fromSticky) {
+        _keepBlackBarVisible = true;
+      }
     });
+    if (fromSticky) {
+      _scrollToDocked();
+    }
     context.read<ProductCubit>().loadProducts(categoryId: cat.id);
   }
 
@@ -143,25 +187,61 @@ class _HomeViewState extends State<_HomeView> {
                       }
                       if (state is ProductsError) {
                         return SliverToBoxAdapter(
-                          child: Center(
-                            child: TextButton(
-                              onPressed: () => context
-                                  .read<ProductCubit>()
-                                  .loadProducts(
-                                    categoryId: _selectedCategoryId,
+                          child: Padding(
+                            padding: const EdgeInsets.all(32),
+                            child: Center(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    state.message,
+                                    style: const TextStyle(color: Colors.red),
+                                    textAlign: TextAlign.center,
                                   ),
-                              child: Text('${state.message}. Retry'),
+                                  const SizedBox(height: 12),
+                                  ElevatedButton(
+                                    onPressed: () => context
+                                        .read<ProductCubit>()
+                                        .loadProducts(
+                                          categoryId: _selectedCategoryId,
+                                        ),
+                                    child: const Text('Retry'),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         );
                       }
                       final loaded = state as ProductsLoaded;
                       if (loaded.products.isEmpty) {
-                        return const SliverToBoxAdapter(
+                        return SliverFillRemaining(
+                          hasScrollBody: false,
                           child: Padding(
-                            padding: EdgeInsets.all(24),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 24,
+                              vertical: 48,
+                            ),
                             child: Center(
-                                child: Text('No products found.')),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.inventory_2_outlined,
+                                    size: 56,
+                                    color: Colors.grey.shade400,
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Text(
+                                    'No products found in this category.',
+                                    style: TextStyle(
+                                      color: Colors.grey.shade600,
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
                         );
                       }
@@ -203,7 +283,9 @@ class _HomeViewState extends State<_HomeView> {
                     },
                   ),
                 ),
-                const SliverToBoxAdapter(child: SizedBox(height: 24)),
+                SliverToBoxAdapter(
+                  child: SizedBox(height: _kDockedOffset + 48),
+                ),
               ],
             ),
           ),
@@ -223,8 +305,9 @@ class _HomeViewState extends State<_HomeView> {
                   final offset = _scrollController.hasClients
                       ? _scrollController.offset
                       : 0.0;
-                  final raw =
-                      ((offset - _kStickyStart) / _kStickyRange)
+                  final raw = _keepBlackBarVisible
+                      ? 1.0
+                      : ((offset - _kStickyStart) / _kStickyRange)
                           .clamp(0.0, 1.0);
                   final t = Curves.easeInOutCubic.transform(raw);
 
@@ -241,8 +324,9 @@ class _HomeViewState extends State<_HomeView> {
                             categories: cats,
                             allSelected: _allCategoriesSelected,
                             selectedCategoryId: _selectedCategoryId,
-                            onSelectAll: _selectAll,
-                            onSelectCategory: _selectCategory,
+                            onSelectAll: () => _selectAll(fromSticky: true),
+                            onSelectCategory: (cat) =>
+                                _selectCategory(cat, fromSticky: true),
                           ),
                         ),
                       ),
@@ -283,7 +367,7 @@ class _HomeViewState extends State<_HomeView> {
           return CategoryChip(
             label: 'All',
             isSelected: _allCategoriesSelected,
-            onTap: _selectAll,
+            onTap: () => _selectAll(fromSticky: false),
           );
         }
         final cat = cats[index - 1];
@@ -291,7 +375,7 @@ class _HomeViewState extends State<_HomeView> {
           label: cat.name,
           isSelected:
               !_allCategoriesSelected && _selectedCategoryId == cat.id,
-          onTap: () => _selectCategory(cat),
+          onTap: () => _selectCategory(cat, fromSticky: false),
         );
       },
     );
@@ -307,7 +391,7 @@ class _HomeViewState extends State<_HomeView> {
       ),
       delegate: SliverChildBuilderDelegate(
         (_, _) => const CustomShimmerCard(),
-        childCount: 6,
+        childCount: 8,
       ),
     );
   }
