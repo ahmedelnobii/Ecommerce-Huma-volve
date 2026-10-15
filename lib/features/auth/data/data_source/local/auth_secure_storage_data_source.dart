@@ -27,4 +27,22 @@ class AuthSecureStorageDataSource implements AuthLocalDataSource {
       throw LocalExptions('Failed to save refresh token');
     }
   }
+
+  @override
+  Future<String?> getAccessToken() async {
+    try {
+      return await _secureStorage.read(key: CachedKeys.accessToken);
+    } catch (e) {
+      throw LocalExptions('Failed to read access token');
+    }
+  }
+
+  @override
+  Future<String?> getRefreshToken() async {
+    try {
+      return await _secureStorage.read(key: CachedKeys.refreshToken);
+    } catch (e) {
+      throw LocalExptions('Failed to read refresh token');
+    }
+  }
 }

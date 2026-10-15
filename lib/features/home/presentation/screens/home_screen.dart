@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../core/dummy_data.dart';
 import '../../../../core/di/get_it.dart';
 import '../../../../core/theme.dart';
 import '../../../../core/widgets/custom_shimmer_card.dart';
+import '../../../profile/presentation/cubit/profile_cubit.dart';
+import '../../../profile/presentation/cubit/profile_states.dart';
 import '../../domain/entities/category.dart';
 import '../cubit/category_cubit.dart';
 import '../cubit/category_states.dart';
@@ -95,11 +96,39 @@ class _HomeViewState extends State<_HomeView> {
                             color: AppTheme.primary,
                           ),
                         ),
-                        CircleAvatar(
-                          radius: 24,
-                          backgroundImage: NetworkImage(
-                            dummyUser.profilePictureUrl,
-                          ),
+                        BlocBuilder<ProfileCubit, ProfileState>(
+                          builder: (context, state) {
+                            String? avatarUrl;
+                            if (state is ProfileSuccess &&
+                                state.user.avatar.isNotEmpty) {
+                              avatarUrl = state.user.avatar;
+                            }
+
+                            return CircleAvatar(
+                              radius: 24,
+                              backgroundColor: Colors.grey.shade200,
+                              backgroundImage: avatarUrl != null
+                                  ? NetworkImage(avatarUrl)
+                                  : null,
+                              onBackgroundImageError:
+                                  avatarUrl != null ? (_, _) {} : null,
+                              child: avatarUrl == null
+                                  ? (state is ProfileLoading
+                                      ? const SizedBox(
+                                          width: 18,
+                                          height: 18,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            color: AppTheme.primary,
+                                          ),
+                                        )
+                                      : const Icon(
+                                          Icons.person,
+                                          color: AppTheme.primary,
+                                        ))
+                                  : null,
+                            );
+                          },
                         ),
                       ],
                     ),

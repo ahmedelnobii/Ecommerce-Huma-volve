@@ -6,4 +6,5 @@ import 'package:ecommerce_app_huma_volve/features/auth/data/models/register_requ
 abstract class AuthRepo {
   Future<Either<Failure, void>> login(LoginRequest loginRequset);
   Future<Either<Failure, void>> register(RegisterRequest registerRequset);
+  Future<Either<Failure, void>> refreshToken();
 }

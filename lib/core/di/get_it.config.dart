@@ -26,6 +26,8 @@ import 'package:ecommerce_app_huma_volve/features/auth/domain/repo/auth_repo.dar
     as _i566;
 import 'package:ecommerce_app_huma_volve/features/auth/domain/use_cases/login.dart'
     as _i491;
+import 'package:ecommerce_app_huma_volve/features/auth/domain/use_cases/refresh_token.dart'
+    as _i426;
 import 'package:ecommerce_app_huma_volve/features/auth/domain/use_cases/register.dart'
     as _i18;
 import 'package:ecommerce_app_huma_volve/features/auth/presentation/cubit/auth_cubit.dart'
@@ -54,6 +56,20 @@ import 'package:ecommerce_app_huma_volve/features/home/presentation/cubit/catego
     as _i226;
 import 'package:ecommerce_app_huma_volve/features/home/presentation/cubit/product_cubit.dart'
     as _i382;
+import 'package:ecommerce_app_huma_volve/features/profile/data/data_source/local/profile_local_data_source.dart'
+    as _i1064;
+import 'package:ecommerce_app_huma_volve/features/profile/data/data_source/remote/profile_api_data_source.dart'
+    as _i306;
+import 'package:ecommerce_app_huma_volve/features/profile/data/data_source/remote/profile_remote_data_source.dart'
+    as _i978;
+import 'package:ecommerce_app_huma_volve/features/profile/data/repo/profile_repo_impl.dart'
+    as _i40;
+import 'package:ecommerce_app_huma_volve/features/profile/domain/repo/profile_repo.dart'
+    as _i896;
+import 'package:ecommerce_app_huma_volve/features/profile/domain/use_cases/get_profile.dart'
+    as _i284;
+import 'package:ecommerce_app_huma_volve/features/profile/presentation/cubit/profile_cubit.dart'
+    as _i466;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart' as _i558;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
@@ -82,14 +98,31 @@ extension GetItInjectableX on _i174.GetIt {
     gh.singleton<_i203.CategoryRepo>(
       () => _i661.CategoryRepoImpl(gh<_i986.CategoryRemoteDataSource>()),
     );
+    gh.singleton<_i978.ProfileRemoteDataSource>(
+      () => _i306.ProfileApiDataSource(gh<_i361.Dio>()),
+    );
+    gh.singleton<_i1064.ProfileLocalDataSource>(
+      () => _i1064.ProfileSecureStorageDataSource(
+        gh<_i558.FlutterSecureStorage>(),
+      ),
+    );
     gh.singleton<_i201.AuthLocalDataSource>(
       () => _i706.AuthSecureStorageDataSource(gh<_i558.FlutterSecureStorage>()),
     );
     gh.singleton<_i937.ProductRepo>(
       () => _i976.ProductRepoImpl(gh<_i493.ProductRemoteDataSource>()),
     );
+    gh.singleton<_i896.ProfileRepo>(
+      () => _i40.ProfileRepoImpl(
+        gh<_i978.ProfileRemoteDataSource>(),
+        gh<_i1064.ProfileLocalDataSource>(),
+      ),
+    );
     gh.singleton<_i407.GetCategories>(
       () => _i407.GetCategories(gh<_i203.CategoryRepo>()),
+    );
+    gh.singleton<_i284.GetProfile>(
+      () => _i284.GetProfile(gh<_i896.ProfileRepo>()),
     );
     gh.singleton<_i566.AuthRepo>(
       () => _i486.AuthRepoImpl(
@@ -98,9 +131,15 @@ extension GetItInjectableX on _i174.GetIt {
       ),
     );
     gh.singleton<_i491.Login>(() => _i491.Login(gh<_i566.AuthRepo>()));
+    gh.singleton<_i426.RefreshToken>(
+      () => _i426.RefreshToken(gh<_i566.AuthRepo>()),
+    );
     gh.singleton<_i18.Register>(() => _i18.Register(gh<_i566.AuthRepo>()));
     gh.singleton<_i226.CategoryCubit>(
       () => _i226.CategoryCubit(gh<_i407.GetCategories>()),
+    );
+    gh.factory<_i466.ProfileCubit>(
+      () => _i466.ProfileCubit(gh<_i284.GetProfile>()),
     );
     gh.singleton<_i808.GetProducts>(
       () => _i808.GetProducts(gh<_i937.ProductRepo>()),

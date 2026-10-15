@@ -4,6 +4,7 @@ import 'package:ecommerce_app_huma_volve/core/errors/remote_exption.dart';
 import 'package:ecommerce_app_huma_volve/features/auth/data/data_source/remote/auth_remote_data_source.dart';
 import 'package:ecommerce_app_huma_volve/features/auth/data/models/login_request.dart';
 import 'package:ecommerce_app_huma_volve/features/auth/data/models/login_responce.dart';
+import 'package:ecommerce_app_huma_volve/features/auth/data/models/refresh_token_request.dart';
 import 'package:ecommerce_app_huma_volve/features/auth/data/models/register_request.dart';
 import 'package:ecommerce_app_huma_volve/features/auth/data/models/register_responce.dart';
 import 'package:injectable/injectable.dart';
@@ -36,6 +37,19 @@ class AuthApiDataSource implements AuthRemoteDataSource {
       );
       final registerResponce = RegisterResponse.fromJson(response.data);
       return registerResponce;
+    } catch (e) {
+      throw RemoteExptions(e.toString());
+    }
+  }
+
+  @override
+  Future<LoginResponse> refreshToken(RefreshTokenRequest request) async {
+    try {
+      final response = await _dio.post(
+        ApiConsts.refreshTokenEndPoint,
+        data: request.toJson(),
+      );
+      return LoginResponse.fromJson(response.data);
     } catch (e) {
       throw RemoteExptions(e.toString());
     }
