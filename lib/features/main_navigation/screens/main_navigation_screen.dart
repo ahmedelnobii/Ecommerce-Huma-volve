@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../core/theme.dart';
 import '../../home/presentation/screens/home_screen.dart';
 import '../../cart/screens/cart_screen.dart';
-import '../../profile/screens/profile_screen.dart';
+import '../../profile/presentation/view/screens/profile_screen.dart';
 
 class MainNavigationScreen extends StatefulWidget {
   const MainNavigationScreen({super.key});
