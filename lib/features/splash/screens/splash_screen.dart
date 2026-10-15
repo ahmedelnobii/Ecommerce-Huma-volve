@@ -58,12 +58,9 @@ class _SplashScreenState extends State<SplashScreen> {
       final refreshResult = await getIt<RefreshToken>().call();
       if (!mounted) return;
 
-      refreshResult.fold(
-        (failure) => _navigateToLogin(),
-        (_) {
-          context.read<ProfileCubit>().fetchProfile();
-        },
-      );
+      refreshResult.fold((failure) => _navigateToLogin(), (_) {
+        context.read<ProfileCubit>().fetchProfile();
+      });
     } catch (_) {
       _navigateToLogin();
     }
@@ -116,7 +113,7 @@ class _SplashScreenState extends State<SplashScreen> {
               Icon(Icons.shopping_bag, size: 120, color: AppTheme.primary),
               const SizedBox(height: 24),
               Text(
-                'Huma-volve',
+                'SHOPY',
                 style: Theme.of(context).textTheme.displayLarge?.copyWith(
                   fontSize: 40,
                   color: AppTheme.primary,
