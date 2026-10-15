@@ -29,7 +29,7 @@ import 'package:ecommerce_app_huma_volve/features/auth/domain/use_cases/login.da
 import 'package:ecommerce_app_huma_volve/features/auth/domain/use_cases/refresh_token.dart'
     as _i426;
 import 'package:ecommerce_app_huma_volve/features/auth/domain/use_cases/register.dart'
-    as _i18;
+    as _i19;
 import 'package:ecommerce_app_huma_volve/features/auth/presentation/cubit/auth_cubit.dart'
     as _i79;
 import 'package:ecommerce_app_huma_volve/features/home/data/data_source/remote/category_api_data_source.dart'
@@ -72,6 +72,22 @@ import 'package:ecommerce_app_huma_volve/features/profile/domain/use_cases/logou
     as _i84;
 import 'package:ecommerce_app_huma_volve/features/profile/presentation/cubit/profile_cubit.dart'
     as _i466;
+import 'package:ecommerce_app_huma_volve/features/wishList/data/data_source/local/wishlist_local_data_source.dart'
+    as _i18;
+import 'package:ecommerce_app_huma_volve/features/wishList/data/repo/wishlist_repo_impl.dart'
+    as _i796;
+import 'package:ecommerce_app_huma_volve/features/wishList/domain/repo/wishlist_repo.dart'
+    as _i732;
+import 'package:ecommerce_app_huma_volve/features/wishList/domain/use_cases/clear_wishlist.dart'
+    as _i266;
+import 'package:ecommerce_app_huma_volve/features/wishList/domain/use_cases/get_wishlist.dart'
+    as _i45;
+import 'package:ecommerce_app_huma_volve/features/wishList/domain/use_cases/remove_from_wishlist.dart'
+    as _i573;
+import 'package:ecommerce_app_huma_volve/features/wishList/domain/use_cases/toggle_wishlist.dart'
+    as _i499;
+import 'package:ecommerce_app_huma_volve/features/wishList/presentation/cubit/wishlist_cubit.dart'
+    as _i411;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart' as _i558;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
@@ -94,6 +110,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.singleton<_i986.CategoryRemoteDataSource>(
       () => _i188.CategoryApiDataSource(gh<_i361.Dio>()),
     );
+    gh.singleton<_i18.WishlistLocalDataSource>(
+      () => _i18.WishlistHiveDataSource(),
+    );
     gh.singleton<_i493.ProductRemoteDataSource>(
       () => _i690.ProductApiDataSource(gh<_i361.Dio>()),
     );
@@ -107,6 +126,21 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i1064.ProfileSecureStorageDataSource(
         gh<_i558.FlutterSecureStorage>(),
       ),
+    );
+    gh.singleton<_i732.WishlistRepo>(
+      () => _i796.WishlistRepoImpl(gh<_i18.WishlistLocalDataSource>()),
+    );
+    gh.singleton<_i266.ClearWishlist>(
+      () => _i266.ClearWishlist(gh<_i732.WishlistRepo>()),
+    );
+    gh.singleton<_i45.GetWishlist>(
+      () => _i45.GetWishlist(gh<_i732.WishlistRepo>()),
+    );
+    gh.singleton<_i573.RemoveFromWishlist>(
+      () => _i573.RemoveFromWishlist(gh<_i732.WishlistRepo>()),
+    );
+    gh.singleton<_i499.ToggleWishlist>(
+      () => _i499.ToggleWishlist(gh<_i732.WishlistRepo>()),
     );
     gh.singleton<_i201.AuthLocalDataSource>(
       () => _i706.AuthSecureStorageDataSource(gh<_i558.FlutterSecureStorage>()),
@@ -140,7 +174,15 @@ extension GetItInjectableX on _i174.GetIt {
     gh.singleton<_i426.RefreshToken>(
       () => _i426.RefreshToken(gh<_i566.AuthRepo>()),
     );
-    gh.singleton<_i18.Register>(() => _i18.Register(gh<_i566.AuthRepo>()));
+    gh.singleton<_i19.Register>(() => _i19.Register(gh<_i566.AuthRepo>()));
+    gh.singleton<_i411.WishlistCubit>(
+      () => _i411.WishlistCubit(
+        gh<_i45.GetWishlist>(),
+        gh<_i499.ToggleWishlist>(),
+        gh<_i573.RemoveFromWishlist>(),
+        gh<_i266.ClearWishlist>(),
+      ),
+    );
     gh.singleton<_i226.CategoryCubit>(
       () => _i226.CategoryCubit(gh<_i407.GetCategories>()),
     );
@@ -148,7 +190,7 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i808.GetProducts(gh<_i937.ProductRepo>()),
     );
     gh.factory<_i79.AuthCubit>(
-      () => _i79.AuthCubit(gh<_i491.Login>(), gh<_i18.Register>()),
+      () => _i79.AuthCubit(gh<_i491.Login>(), gh<_i19.Register>()),
     );
     gh.factory<_i382.ProductCubit>(
       () => _i382.ProductCubit(gh<_i808.GetProducts>()),

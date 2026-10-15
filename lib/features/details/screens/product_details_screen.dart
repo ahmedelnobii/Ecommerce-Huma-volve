@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../home/domain/entities/product.dart';
 import '../../../core/theme.dart';
+import '../../wishList/presentation/cubit/wishlist_cubit.dart';
+import '../../wishList/presentation/cubit/wishlist_state.dart';
 import '../widgets/color_selector.dart';
 import '../widgets/size_selector.dart';
 import '../../../core/widgets/primary_button.dart';
@@ -60,16 +63,37 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
               onPressed: () => Navigator.pop(context),
             ),
             actions: [
-              IconButton(
-                icon: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.9),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(Icons.favorite_border, size: 18),
-                ),
-                onPressed: () {},
+              BlocBuilder<WishlistCubit, WishlistState>(
+                builder: (context, state) {
+                  final isFav = context
+                      .read<WishlistCubit>()
+                      .isFavorite(widget.product.id);
+                  return IconButton(
+                    icon: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.9),
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.05),
+                            blurRadius: 8,
+                          ),
+                        ],
+                      ),
+                      child: Icon(
+                        isFav ? Icons.favorite : Icons.favorite_border,
+                        size: 18,
+                        color: isFav ? AppTheme.accent : Colors.black87,
+                      ),
+                    ),
+                    onPressed: () {
+                      context
+                          .read<WishlistCubit>()
+                          .toggleWishlist(widget.product);
+                    },
+                  );
+                },
               ),
               const SizedBox(width: 8),
             ],

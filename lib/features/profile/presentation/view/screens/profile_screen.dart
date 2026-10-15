@@ -4,6 +4,7 @@ import 'package:ecommerce_app_huma_volve/features/profile/domain/entities/user_e
 import 'package:ecommerce_app_huma_volve/features/profile/presentation/cubit/profile_cubit.dart';
 import 'package:ecommerce_app_huma_volve/features/profile/presentation/cubit/profile_states.dart';
 import 'package:ecommerce_app_huma_volve/features/profile/presentation/view/widgets/profile_menu_item.dart';
+import 'package:ecommerce_app_huma_volve/features/wishList/presentation/screens/wishlist_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -121,7 +122,14 @@ class _ProfileContent extends StatelessWidget {
               ProfileMenuItem(
                 icon: Icons.favorite_border,
                 title: 'Wishlist',
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const WishlistScreen(),
+                    ),
+                  );
+                },
               ),
               ProfileMenuItem(
                 icon: Icons.location_on_outlined,

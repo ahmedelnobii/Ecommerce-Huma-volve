@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/entities/product.dart';
 import '../../../../core/theme.dart';
 import '../../../details/screens/product_details_screen.dart';
+import '../../../wishList/presentation/cubit/wishlist_cubit.dart';
+import '../../../wishList/presentation/cubit/wishlist_state.dart';
 
 class ProductCard extends StatelessWidget {
   final Product product;
@@ -66,17 +69,37 @@ class ProductCard extends StatelessWidget {
                   Positioned(
                     top: 12,
                     right: 12,
-                    child: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.favorite_border,
-                        size: 18,
-                        color: AppTheme.accent,
-                      ),
+                    child: BlocBuilder<WishlistCubit, WishlistState>(
+                      builder: (context, state) {
+                        final isFav =
+                            context.read<WishlistCubit>().isFavorite(product.id);
+                        return GestureDetector(
+                          onTap: () {
+                            context
+                                .read<WishlistCubit>()
+                                .toggleWishlist(product);
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.08),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: Icon(
+                              isFav ? Icons.favorite : Icons.favorite_border,
+                              size: 18,
+                              color: AppTheme.accent,
+                            ),
+                          ),
+                        );
+                      },
                     ),
                   ),
                 ],

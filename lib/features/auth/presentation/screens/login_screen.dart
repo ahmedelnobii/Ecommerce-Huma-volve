@@ -56,6 +56,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   isLoading = false;
                 });
                 await context.read<ProfileCubit>().fetchProfile();
+                if (!context.mounted) return;
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
                     builder: (context) => MainNavigationScreen(),
