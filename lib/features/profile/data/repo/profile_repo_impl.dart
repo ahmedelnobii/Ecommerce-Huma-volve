@@ -35,4 +35,16 @@ class ProfileRepoImpl implements ProfileRepo {
       return Left(Failure(e.toString()));
     }
   }
+
+  @override
+  Future<Either<Failure, void>> logout() async {
+    try {
+      await _localDataSource.clearTokens();
+      return const Right(null);
+    } on AppExceptions catch (e) {
+      return Left(ErrorHandler.handle(e.message));
+    } catch (e) {
+      return Left(Failure(e.toString()));
+    }
+  }
 }

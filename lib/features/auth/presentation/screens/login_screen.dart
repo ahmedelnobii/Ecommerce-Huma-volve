@@ -1,5 +1,6 @@
 import 'package:ecommerce_app_huma_volve/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:ecommerce_app_huma_volve/features/auth/presentation/cubit/auth_states.dart';
+import 'package:ecommerce_app_huma_volve/features/profile/presentation/cubit/profile_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -44,7 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(32.0),
           child: BlocListener<AuthCubit, AuthState>(
-            listener: (context, state) {
+            listener: (context, state) async {
               if (state is AuthLoading) {
                 setState(() {
                   isLoading = true;
@@ -54,6 +55,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 setState(() {
                   isLoading = false;
                 });
+                await context.read<ProfileCubit>().fetchProfile();
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
                     builder: (context) => MainNavigationScreen(),

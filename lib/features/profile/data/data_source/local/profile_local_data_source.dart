@@ -5,6 +5,7 @@ import 'package:injectable/injectable.dart';
 
 abstract class ProfileLocalDataSource {
   Future<String> getAccessToken();
+  Future<void> clearTokens();
 }
 
 @Singleton(as: ProfileLocalDataSource)
@@ -21,6 +22,16 @@ class ProfileSecureStorageDataSource implements ProfileLocalDataSource {
       return token;
     } catch (e) {
       throw LocalExptions('Failed to read access token');
+    }
+  }
+
+  @override
+  Future<void> clearTokens() async {
+    try {
+      await _secureStorage.delete(key: CachedKeys.accessToken);
+      await _secureStorage.delete(key: CachedKeys.refreshToken);
+    } catch (e) {
+      throw LocalExptions('Failed to clear tokens');
     }
   }
 }

@@ -4,4 +4,5 @@ import 'package:ecommerce_app_huma_volve/features/profile/domain/entities/user_e
 
 abstract class ProfileRepo {
   Future<Either<Failure, UserEntity>> getProfile();
+  Future<Either<Failure, void>> logout();
 }
