@@ -8,6 +8,8 @@ import 'package:ecommerce_app_huma_volve/features/wishList/presentation/screens/
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../widgets/profile_loading_skeleton.dart';
+
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
@@ -28,7 +30,7 @@ class _ProfileView extends StatelessWidget {
         child: BlocBuilder<ProfileCubit, ProfileState>(
           builder: (context, state) {
             if (state is ProfileLoading || state is ProfileInitial) {
-              return const Center(child: CircularProgressIndicator());
+              return const ProfileLoadingSkeleton();
             }
             if (state is ProfileError) {
               return Center(
@@ -130,21 +132,6 @@ class _ProfileContent extends StatelessWidget {
                     ),
                   );
                 },
-              ),
-              ProfileMenuItem(
-                icon: Icons.location_on_outlined,
-                title: 'Shipping Addresses',
-                onTap: () {},
-              ),
-              ProfileMenuItem(
-                icon: Icons.payment_outlined,
-                title: 'Payment Methods',
-                onTap: () {},
-              ),
-              ProfileMenuItem(
-                icon: Icons.settings_outlined,
-                title: 'Settings',
-                onTap: () {},
               ),
               const SizedBox(height: 16),
               ProfileMenuItem(
