@@ -6,31 +6,23 @@ class ShareButton extends StatelessWidget {
   final Product product;
   final String? customShareText;
 
-  const ShareButton({
-    super.key,
-    required this.product,
-    this.customShareText,
-  });
+  const ShareButton({super.key, required this.product, this.customShareText});
 
   Future<void> _share(BuildContext context) async {
-    final box = context.findRenderObject() as RenderBox?;
-    final sharePositionOrigin = box != null
-        ? box.localToGlobal(Offset.zero) & box.size
-        : null;
+    // final box = context.findRenderObject() as RenderBox?;
+    // final sharePositionOrigin = box != null
+    //     ? box.localToGlobal(Offset.zero) & box.size
+    //     : null;
 
-    final shareText = customShareText ??
+    final shareText =
+        customShareText ??
         'Check out "${product.name}" on Shopy!\n'
-        'Price: \$${product.price.toStringAsFixed(2)}\n\n'
-        '${product.description.isNotEmpty ? '${product.description}\n\n' : ''}'
-        'https://example.com/details/${product.id}';
+            'Price: \$${product.price.toStringAsFixed(2)}\n\n'
+            '${product.description.isNotEmpty ? '${product.description}\n\n' : ''}'
+            'https://evently-route-c19.web.app/details/${product.id}';
 
     await SharePlus.instance.share(
-      ShareParams(
-        text: shareText,
-        subject: product.name,
-        title: product.name,
-        sharePositionOrigin: sharePositionOrigin,
-      ),
+      ShareParams(text: shareText, subject: product.name, title: product.name),
     );
   }
 
