@@ -1,5 +1,6 @@
 import 'package:ecommerce_app_huma_volve/core/app_bloc_observal.dart';
 import 'package:ecommerce_app_huma_volve/core/di/get_it.dart';
+import 'package:ecommerce_app_huma_volve/core/routes/app_route.dart';
 import 'package:ecommerce_app_huma_volve/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:ecommerce_app_huma_volve/features/cart/presentation/cubit/cart_cubit.dart';
 import 'package:ecommerce_app_huma_volve/features/profile/presentation/cubit/profile_cubit.dart';
@@ -8,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'core/theme.dart';
-import 'features/splash/screens/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,11 +30,12 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => getIt<ProfileCubit>()),
         BlocProvider(create: (context) => getIt<WishlistCubit>()),
       ],
-      child: MaterialApp(
+      child: MaterialApp.router(
+        routerConfig: router,
         title: 'E-Commerce App',
         debugShowCheckedModeBanner: false,
         theme: AppTheme.lightTheme,
-        home: const SplashScreen(),
+        // home: const SplashScreen(),
       ),
     );
   }

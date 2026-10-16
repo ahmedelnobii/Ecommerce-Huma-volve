@@ -21,8 +21,19 @@ class WishlistItemCard extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(
-            builder: (context) => ProductDetailsScreen(product: product),
+          PageRouteBuilder(
+            transitionDuration: const Duration(milliseconds: 500),
+            pageBuilder: (context, animation, secondaryAnimation) =>
+                ProductDetailsScreen(
+                  productId: int.parse(product.id),
+                  coverImageUrl: product.imageUrl,
+                  productName: product.name,
+                  productPrice: product.price,
+                ),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+                  return FadeTransition(opacity: animation, child: child);
+                },
           ),
         );
       },
@@ -43,19 +54,22 @@ class WishlistItemCard extends StatelessWidget {
         ),
         child: Row(
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(16),
-              child: SizedBox(
-                width: 90,
-                height: 90,
-                child: product.imageUrl.isEmpty
-                    ? _buildPlaceholder()
-                    : Image.network(
-                        product.imageUrl,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) =>
-                            _buildPlaceholder(),
-                      ),
+            Hero(
+              tag: 'product-${product.id}',
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: SizedBox(
+                  width: 90,
+                  height: 90,
+                  child: product.imageUrl.isEmpty
+                      ? _buildPlaceholder()
+                      : Image.network(
+                          product.imageUrl,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) =>
+                              _buildPlaceholder(),
+                        ),
+                ),
               ),
             ),
             const SizedBox(width: 16),

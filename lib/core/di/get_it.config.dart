@@ -32,6 +32,18 @@ import 'package:ecommerce_app_huma_volve/features/auth/domain/use_cases/register
     as _i19;
 import 'package:ecommerce_app_huma_volve/features/auth/presentation/cubit/auth_cubit.dart'
     as _i79;
+import 'package:ecommerce_app_huma_volve/features/details/data/data_source/remote/product_details_api_data_source.dart'
+    as _i111;
+import 'package:ecommerce_app_huma_volve/features/details/data/data_source/remote/product_details_remote_data_source.dart'
+    as _i112;
+import 'package:ecommerce_app_huma_volve/features/details/data/repo/product_details_repo_impl.dart'
+    as _i113;
+import 'package:ecommerce_app_huma_volve/features/details/domain/repo/product_details_repo.dart'
+    as _i114;
+import 'package:ecommerce_app_huma_volve/features/details/domain/use_cases/get_product_details.dart'
+    as _i115;
+import 'package:ecommerce_app_huma_volve/features/details/presentation/cubit/product_details_cubit.dart'
+    as _i116;
 import 'package:ecommerce_app_huma_volve/features/home/data/data_source/remote/category_api_data_source.dart'
     as _i188;
 import 'package:ecommerce_app_huma_volve/features/home/data/data_source/remote/category_remote_data_source.dart'
@@ -194,6 +206,20 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i382.ProductCubit>(
       () => _i382.ProductCubit(gh<_i808.GetProducts>()),
+    );
+    gh.singleton<_i112.ProductDetailsRemoteDataSource>(
+      () => _i111.ProductDetailsApiDataSource(gh<_i361.Dio>()),
+    );
+    gh.singleton<_i114.ProductDetailsRepo>(
+      () => _i113.ProductDetailsRepoImpl(
+        gh<_i112.ProductDetailsRemoteDataSource>(),
+      ),
+    );
+    gh.singleton<_i115.GetProductDetails>(
+      () => _i115.GetProductDetails(gh<_i114.ProductDetailsRepo>()),
+    );
+    gh.factory<_i116.ProductDetailsCubit>(
+      () => _i116.ProductDetailsCubit(gh<_i115.GetProductDetails>()),
     );
     return this;
   }
