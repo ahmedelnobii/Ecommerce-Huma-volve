@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/entities/product.dart';
+import '../../../cart/presentation/cubit/cart_cubit.dart';
 import '../../../../core/theme.dart';
 import '../../../details/screens/product_details_screen.dart';
 import '../../../wishList/presentation/cubit/wishlist_cubit.dart';
@@ -71,13 +72,14 @@ class ProductCard extends StatelessWidget {
                     right: 12,
                     child: BlocBuilder<WishlistCubit, WishlistState>(
                       builder: (context, state) {
-                        final isFav =
-                            context.read<WishlistCubit>().isFavorite(product.id);
+                        final isFav = context.read<WishlistCubit>().isFavorite(
+                          product.id,
+                        );
                         return GestureDetector(
                           onTap: () {
-                            context
-                                .read<WishlistCubit>()
-                                .toggleWishlist(product);
+                            context.read<WishlistCubit>().toggleWishlist(
+                              product,
+                            );
                           },
                           child: Container(
                             padding: const EdgeInsets.all(8),
@@ -135,16 +137,29 @@ class ProductCard extends StatelessWidget {
                             fontSize: 18,
                           ),
                         ),
-                        Container(
-                          padding: const EdgeInsets.all(6),
-                          decoration: const BoxDecoration(
-                            color: AppTheme.primary,
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(
-                            Icons.add,
-                            color: Colors.white,
-                            size: 16,
+                        InkWell(
+                          onTap: () {
+                            context.read<CartCubit>().addProduct(product);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('${product.name} added to cart'),
+                                behavior: SnackBarBehavior.floating,
+                                backgroundColor: AppTheme.primary,
+                              ),
+                            );
+                          },
+                          borderRadius: BorderRadius.circular(20),
+                          child: Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: const BoxDecoration(
+                              color: AppTheme.primary,
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.add,
+                              color: Colors.white,
+                              size: 16,
+                            ),
                           ),
                         ),
                       ],

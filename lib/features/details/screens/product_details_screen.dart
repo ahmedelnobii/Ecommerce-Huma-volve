@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../home/domain/entities/product.dart';
+import '../../cart/presentation/cubit/cart_cubit.dart';
 import '../../../core/theme.dart';
 import '../../wishList/presentation/cubit/wishlist_cubit.dart';
 import '../../wishList/presentation/cubit/wishlist_state.dart';
@@ -65,9 +66,9 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
             actions: [
               BlocBuilder<WishlistCubit, WishlistState>(
                 builder: (context, state) {
-                  final isFav = context
-                      .read<WishlistCubit>()
-                      .isFavorite(widget.product.id);
+                  final isFav = context.read<WishlistCubit>().isFavorite(
+                    widget.product.id,
+                  );
                   return IconButton(
                     icon: Container(
                       padding: const EdgeInsets.all(8),
@@ -88,9 +89,9 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       ),
                     ),
                     onPressed: () {
-                      context
-                          .read<WishlistCubit>()
-                          .toggleWishlist(widget.product);
+                      context.read<WishlistCubit>().toggleWishlist(
+                        widget.product,
+                      );
                     },
                   );
                 },
@@ -244,6 +245,11 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     PrimaryButton(
                       text: 'Add to Cart',
                       onPressed: () {
+                        context.read<CartCubit>().addProduct(
+                          widget.product,
+                          selectedSize: _selectedSize,
+                          selectedColor: _selectedColor,
+                        );
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text(

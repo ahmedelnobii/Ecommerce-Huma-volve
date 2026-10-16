@@ -1,6 +1,7 @@
 import 'package:ecommerce_app_huma_volve/core/app_bloc_observal.dart';
 import 'package:ecommerce_app_huma_volve/core/di/get_it.dart';
 import 'package:ecommerce_app_huma_volve/features/auth/presentation/cubit/auth_cubit.dart';
+import 'package:ecommerce_app_huma_volve/features/cart/presentation/cubit/cart_cubit.dart';
 import 'package:ecommerce_app_huma_volve/features/profile/presentation/cubit/profile_cubit.dart';
 import 'package:ecommerce_app_huma_volve/features/wishList/presentation/cubit/wishlist_cubit.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +26,7 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => getIt<AuthCubit>()),
+        BlocProvider(create: (context) => CartCubit()),
         BlocProvider(create: (context) => getIt<ProfileCubit>()),
         BlocProvider(create: (context) => getIt<WishlistCubit>()),
       ],

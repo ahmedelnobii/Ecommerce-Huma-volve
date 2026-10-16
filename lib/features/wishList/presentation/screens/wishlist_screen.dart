@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../cart/presentation/cubit/cart_cubit.dart';
 import '../../../../core/theme.dart';
 import '../cubit/wishlist_cubit.dart';
 import '../cubit/wishlist_state.dart';
@@ -27,7 +28,8 @@ class _WishlistScreenState extends State<WishlistScreen> {
   }
 
   void _onScroll() {
-    final scrolled = _scrollController.hasClients && _scrollController.offset > 10;
+    final scrolled =
+        _scrollController.hasClients && _scrollController.offset > 10;
     if (scrolled != _isScrolled) {
       setState(() {
         _isScrolled = scrolled;
@@ -213,8 +215,10 @@ class _WishlistScreenState extends State<WishlistScreen> {
             child: Column(
               children: [
                 Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 12,
+                  ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -248,12 +252,26 @@ class _WishlistScreenState extends State<WishlistScreen> {
                 Expanded(
                   child: ListView.builder(
                     controller: _scrollController,
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 8,
+                    ),
                     itemCount: items.length,
                     itemBuilder: (context, index) {
                       final product = items[index];
-                      return WishlistItemCard(product: product);
+                      return WishlistItemCard(
+                        product: product,
+                        onAddToCart: () {
+                          context.read<CartCubit>().addProduct(product);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('${product.name} added to cart'),
+                              behavior: SnackBarBehavior.floating,
+                              backgroundColor: AppTheme.primary,
+                            ),
+                          );
+                        },
+                      );
                     },
                   ),
                 ),

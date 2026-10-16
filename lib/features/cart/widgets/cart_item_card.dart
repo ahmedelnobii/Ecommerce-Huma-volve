@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
-import '../../../core/dummy_data.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../core/theme.dart';
+import '../domain/entities/cart_item.dart';
+import '../presentation/cubit/cart_cubit.dart';
 
 class CartItemCard extends StatelessWidget {
   final CartItem cartItem;
@@ -28,11 +31,17 @@ class CartItemCard extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(16),
-            child: Image.network(
-              cartItem.product.imageUrl,
+            child: SizedBox(
               width: 90,
               height: 90,
-              fit: BoxFit.cover,
+              child: cartItem.product.imageUrl.isEmpty
+                  ? _imagePlaceholder()
+                  : Image.network(
+                      cartItem.product.imageUrl,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) =>
+                          _imagePlaceholder(),
+                    ),
             ),
           ),
           const SizedBox(width: 16),
@@ -52,10 +61,7 @@ class CartItemCard extends StatelessWidget {
                 const SizedBox(height: 6),
                 Text(
                   'Size: ${cartItem.selectedSize}',
-                  style: TextStyle(
-                    color: Colors.grey.shade600,
-                    fontSize: 14,
-                  ),
+                  style: TextStyle(color: Colors.grey.shade600, fontSize: 14),
                 ),
                 const SizedBox(height: 12),
                 Row(
@@ -70,14 +76,22 @@ class CartItemCard extends StatelessWidget {
                       ),
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: AppTheme.background,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Row(
                         children: [
-                          _buildQuantityButton(Icons.remove, () {}),
+                          _buildQuantityButton(
+                            Icons.remove,
+                            () => context.read<CartCubit>().decreaseQuantity(
+                              cartItem,
+                            ),
+                          ),
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 12),
                             child: Text(
@@ -88,7 +102,12 @@ class CartItemCard extends StatelessWidget {
                               ),
                             ),
                           ),
-                          _buildQuantityButton(Icons.add, () {}),
+                          _buildQuantityButton(
+                            Icons.add,
+                            () => context.read<CartCubit>().increaseQuantity(
+                              cartItem,
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -112,6 +131,15 @@ class CartItemCard extends StatelessWidget {
           shape: BoxShape.circle,
         ),
         child: Icon(icon, size: 14, color: AppTheme.primary),
+      ),
+    );
+  }
+
+  Widget _imagePlaceholder() {
+    return Container(
+      color: Colors.grey.shade100,
+      child: const Center(
+        child: Icon(Icons.image_not_supported_outlined, color: Colors.grey),
       ),
     );
   }

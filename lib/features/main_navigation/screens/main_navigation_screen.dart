@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../core/theme.dart';
 import '../../home/presentation/screens/home_screen.dart';
 import '../../cart/screens/cart_screen.dart';
+import '../../cart/presentation/cubit/cart_cubit.dart';
+import '../../cart/presentation/cubit/cart_state.dart';
 import '../../profile/presentation/view/screens/profile_screen.dart';
 
 class MainNavigationScreen extends StatefulWidget {
@@ -14,16 +18,22 @@ class MainNavigationScreen extends StatefulWidget {
 class _MainNavigationScreenState extends State<MainNavigationScreen> {
   int _currentIndex = 0;
 
-  final List<Widget> _screens = [
-    const HomeScreen(),
-    const CartScreen(),
-    const ProfileScreen(),
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final screens = [
+      const HomeScreen(),
+      CartScreen(
+        onOrderCompleted: () {
+          setState(() {
+            _currentIndex = 0;
+          });
+        },
+      ),
+      const ProfileScreen(),
+    ];
+
     return Scaffold(
-      body: _screens[_currentIndex],
+      body: screens[_currentIndex],
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           boxShadow: [
@@ -50,8 +60,8 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
             showUnselectedLabels: false,
             type: BottomNavigationBarType.fixed,
             elevation: 0,
-            items: const [
-              BottomNavigationBarItem(
+            items: [
+              const BottomNavigationBarItem(
                 icon: Padding(
                   padding: EdgeInsets.symmetric(vertical: 8.0),
                   child: Icon(Icons.home_filled, size: 28),
@@ -63,17 +73,11 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                 label: 'Home',
               ),
               BottomNavigationBarItem(
-                icon: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 8.0),
-                  child: Icon(Icons.shopping_cart_outlined, size: 28),
-                ),
-                activeIcon: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 8.0),
-                  child: Icon(Icons.shopping_cart, size: 32),
-                ),
+                icon: _cartIcon(Icons.shopping_cart_outlined, 28),
+                activeIcon: _cartIcon(Icons.shopping_cart, 32),
                 label: 'Cart',
               ),
-              BottomNavigationBarItem(
+              const BottomNavigationBarItem(
                 icon: Padding(
                   padding: EdgeInsets.symmetric(vertical: 8.0),
                   child: Icon(Icons.person_outline, size: 28),
@@ -86,6 +90,45 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _cartIcon(IconData icon, double size) {
+    return BlocBuilder<CartCubit, CartState>(
+      builder: (context, state) => Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Icon(icon, size: size),
+            if (state.itemCount > 0)
+              Positioned(
+                top: -8,
+                right: -10,
+                child: Container(
+                  padding: const EdgeInsets.all(4),
+                  constraints: const BoxConstraints(
+                    minWidth: 18,
+                    minHeight: 18,
+                  ),
+                  decoration: const BoxDecoration(
+                    color: AppTheme.accent,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Text(
+                    state.itemCount > 99 ? '99+' : '${state.itemCount}',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+          ],
         ),
       ),
     );

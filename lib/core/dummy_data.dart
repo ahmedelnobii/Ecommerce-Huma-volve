@@ -40,35 +40,6 @@ final dummyProducts = [
   ),
 ];
 
-class CartItem {
-  final Product product;
-  final int quantity;
-  final Color selectedColor;
-  final String selectedSize;
-
-  CartItem({
-    required this.product,
-    required this.quantity,
-    required this.selectedColor,
-    required this.selectedSize,
-  });
-}
-
-final dummyCart = [
-  CartItem(
-    product: dummyProducts[0],
-    quantity: 1,
-    selectedColor: Colors.white,
-    selectedSize: '42',
-  ),
-  CartItem(
-    product: dummyProducts[2],
-    quantity: 2,
-    selectedColor: Colors.black,
-    selectedSize: 'One Size',
-  ),
-];
-
 class UserProfile {
   final String name;
   final String email;
