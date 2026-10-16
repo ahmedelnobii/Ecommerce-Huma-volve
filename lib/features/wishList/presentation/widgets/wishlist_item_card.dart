@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/theme.dart';
-import '../../../details/screens/product_details_screen.dart';
+import '../../../details/presentation/view/screens/product_details_screen.dart';
 import '../../../home/domain/entities/product.dart';
 import '../cubit/wishlist_cubit.dart';
 
@@ -9,11 +9,7 @@ class WishlistItemCard extends StatelessWidget {
   final Product product;
   final VoidCallback? onAddToCart;
 
-  const WishlistItemCard({
-    super.key,
-    required this.product,
-    this.onAddToCart,
-  });
+  const WishlistItemCard({super.key, required this.product, this.onAddToCart});
 
   @override
   Widget build(BuildContext context) {
@@ -93,12 +89,14 @@ class WishlistItemCard extends StatelessWidget {
                       ),
                       GestureDetector(
                         onTap: () {
-                          context
-                              .read<WishlistCubit>()
-                              .removeFromWishlist(product.id);
+                          context.read<WishlistCubit>().removeFromWishlist(
+                            product.id,
+                          );
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text('${product.name} removed from wishlist'),
+                              content: Text(
+                                '${product.name} removed from wishlist',
+                              ),
                               duration: const Duration(seconds: 1),
                               behavior: SnackBarBehavior.floating,
                               shape: RoundedRectangleBorder(
@@ -125,10 +123,7 @@ class WishlistItemCard extends StatelessWidget {
                   const SizedBox(height: 6),
                   Text(
                     product.description,
-                    style: TextStyle(
-                      color: Colors.grey.shade600,
-                      fontSize: 13,
-                    ),
+                    style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -145,11 +140,14 @@ class WishlistItemCard extends StatelessWidget {
                         ),
                       ),
                       InkWell(
-                        onTap: onAddToCart ??
+                        onTap:
+                            onAddToCart ??
                             () {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: Text('${product.name} added to cart!'),
+                                  content: Text(
+                                    '${product.name} added to cart!',
+                                  ),
                                   duration: const Duration(seconds: 1),
                                   behavior: SnackBarBehavior.floating,
                                   shape: RoundedRectangleBorder(
@@ -203,11 +201,7 @@ class WishlistItemCard extends StatelessWidget {
   Widget _buildPlaceholder() {
     return Container(
       color: Colors.grey.shade200,
-      child: Icon(
-        Icons.image_outlined,
-        color: Colors.grey.shade400,
-        size: 32,
-      ),
+      child: Icon(Icons.image_outlined, color: Colors.grey.shade400, size: 32),
     );
   }
 }

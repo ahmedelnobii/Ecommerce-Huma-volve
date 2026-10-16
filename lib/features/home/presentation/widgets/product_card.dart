@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/entities/product.dart';
 import '../../../cart/presentation/cubit/cart_cubit.dart';
 import '../../../../core/theme.dart';
-import '../../../details/screens/product_details_screen.dart';
+import '../../../details/presentation/view/screens/product_details_screen.dart';
 import '../../../wishList/presentation/cubit/wishlist_cubit.dart';
 import '../../../wishList/presentation/cubit/wishlist_state.dart';
 
